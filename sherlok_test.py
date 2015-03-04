@@ -17,15 +17,16 @@ class TestSherlokClient(unittest.TestCase):
             print a
 
     def test_filter(self):
-        annotations = [(29, 33, u'Neuron', {}),
-             (0, 7, u'Layer', {}),
-             (8, 14, u'NeuronWithProperties', {}),
-             (19, 33, u'NeuronWithProperties', {}),
-             (19, 28, u'BrainRegionProp', {})]
+        annotations = [
+             (29, 33, u'x0', u'Neuron', {}),
+             (0,   7, u'x1', u'Layer', {}),
+             (8,  14, u'x2', u'NeuronWithProperties', {}),
+             (19, 33, u'x3', u'NeuronWithProperties', {}),
+             (19, 28, u'x4', u'BrainRegionProp', {})]
         selected = Sherlok().select(annotations, 'NeuronWithProperties')
         self.assertEqual(len(selected), 2)
         for s in selected:
-            self.assertEqual(s[2], 'NeuronWithProperties')
+            self.assertEqual(s[3], 'NeuronWithProperties')
 
     # def test_keep_largest(self):
     #     annotations = [(0, 4, u'a', {}), (0, 5, u'b', {}), (0, 7, u'c', {})]

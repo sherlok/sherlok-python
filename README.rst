@@ -10,23 +10,23 @@ See <http://sherlok.io/>.
 
     from sherlok import Sherlok
 
-    annotations = Sherlok().annotate('neuroner', 'layer 4 neuron')
-    print list(annotations)
+    print list(Sherlok().annotate('neuroner', 'layer 4 neuron'))
 
-    [(0, 14, u'Neuron', {}),
-     (8, 14, u'Neuron', {}),
-     (8, 14, u'NeuronTrigger', {}),
-     (0, 7, u'Layer', {u'ontologyId': u'HBP_LAYER:0000004'})]
+    [(0, 14, 'layer 4 neuron', u'Neuron', {}),
+     (8, 14, 'neuron',  u'Neuron', {}),
+     (8, 14, 'neuron',  u'NeuronTrigger', {}),
+     (0, 7,  'layer 4', u'Layer', {u'ontologyId': u'HBP_LAYER:0000004'})]
+
 
      # filtering and finding the text back
-
     s = Sherlok()
-    txt = 'Accumbens nucleus shell neuron'
-    brain_regions = s.select(s.annotate('neuroner', txt), 'BrainRegionProp')
+    txt = 'parvalbumin-positive fast-spiking basket cells, somatostatin-positive regular-spiking bipolar and multipolar cells, and cholecystokinin-positive irregular-spiking bipolar and multipolar cells'
+    morphology = s.select(s.annotate('neuroner', txt), u'Morphology')
+    for m in morphology:
+        print m
 
-    [(0, 17, u'BrainRegionProp', {})]
-
-    for br in brain_regions:
-        print txt[br[0]:br[1]]
-
-    Accumbens nucleus
+    (175, 185, 'multipolar', u'Morphology', {})
+    (163, 170, 'bipolar', u'Morphology', {})
+    (98, 108, 'multipolar', u'Morphology', {})
+    (86, 93, 'bipolar', u'Morphology', {})
+    (34, 40, 'basket', u'Morphology', {})

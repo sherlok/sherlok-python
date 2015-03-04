@@ -26,15 +26,17 @@ class Sherlok(object):
                 begin, end = annotation.get('begin', 0), annotation['end']
                 # type of annotation
                 atype = annotation['@type']
+                # text
+                txt = text[begin:end]
                 # additional attributes
                 attributes = {k:v for (k,v) in annotation.items()\
                     if k not in ['sofa', 'begin', 'end', '@type']}
 
-                yield begin, end, atype, attributes
+                yield begin, end, txt, atype, attributes
 
 
     def select(self, annotations, type):
-        return [a for a in annotations if a[2] == type]
+        return [a for a in annotations if a[3] == type]
 
 
     # def keep_largest(self, annotations):
