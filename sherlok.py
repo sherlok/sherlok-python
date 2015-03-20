@@ -9,7 +9,7 @@ class Sherlok(object):
     @param text: the text to analyse
     @return: a tuple (begin, end, atype, attributes{})
     '''
-    def annotate(self, pipeline, text, host='localhost', port=9600):
+    def annotate(self, pipeline, text, host='localhost', port=9600, view='_InitialView'):
 
         resp = requests.post(
             'http://{}:{}/annotate/{}'.format(host, port, pipeline),
@@ -18,21 +18,17 @@ class Sherlok(object):
             raise Exception('Sherlok error: {} {}'.format(resp.status_code, resp.text))
         json = resp.json()
 
-        for _, annotation in json['annotations'].iteritems():
-            #print annotation
-            # ignore DocumentAnnotation (contains the request text) and Sofa
-            if annotation['@type'] not in [u'DocumentAnnotation', u'Sofa']:
-                # begin and end of found annotation
-                begin, end = annotation.get('begin', 0), annotation['end']
-                # type of annotation
-                atype = annotation['@type']
-                # text
-                txt = text[begin:end]
-                # additional attributes
-                attributes = {k:v for (k,v) in annotation.items()\
-                    if k not in ['sofa', 'begin', 'end', '@type']}
+        for annot_type, annotations in json['_views'][view].iteritems():
 
-                yield begin, end, txt, atype, attributes
+            # ignore DocumentAnnotation (contains the request text) and Sofa
+            if annot_type not in [u'DocumentAnnotation', u'Sofa']:
+                for a in annotations:
+                    begin, end = a['begin'], a['end']
+                    txt = text[begin:end]
+                    # additional attributes
+                    attributes = { k:v for (k,v) in a.items() \
+                        if k not in ['sofa', 'begin', 'end'] }
+                    yield begin, end, txt, annot_type, attributes
 
 
     def select(self, annotations, type):

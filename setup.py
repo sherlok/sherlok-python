@@ -6,7 +6,7 @@ with open('README.rst') as f:
 
 setup(
     name='sherlok',
-    version='0.1.3',
+    version='0.1.4',
     description='A Python client for Sherlok',
     long_description=readme,
     url='https://github.com/renaud/sherlok-python',

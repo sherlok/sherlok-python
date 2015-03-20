@@ -4,8 +4,9 @@ https://pypi.python.org/pypi/sherlok/
 
 ## shorter: http://stackoverflow.com/a/4157080/125617
 
-    python setup.py sdist register upload
+    change (increase) version id in `setup.py`
 
+    python setup.py sdist register upload
 
 ## longer:
 

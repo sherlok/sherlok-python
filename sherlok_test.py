@@ -5,9 +5,6 @@ from sherlok import Sherlok
 ''' Requires a running Sherlok server'''
 class TestSherlokClient(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_opennlp_ners(self):
         pipeline = 'opennlp.ners.en'
         text = '''Jack Burton (born April 29, 1954 in El Paso), also known as Jake Burton, is an American snowboarder and founder of Burton Snowboards.'''
