@@ -7,7 +7,7 @@ class Sherlok(object):
     '''
     @param pipeline: the Sherlok pipeline to invoke
     @param text: the text to analyse
-    @return: a tuple (begin, end, atype, attributes{})
+    @return: a generator of tuples (begin, end, text, annotation_type, attributes{})
     '''
     def annotate(self, pipeline, text, host='localhost', port=9600, view='_InitialView'):
 

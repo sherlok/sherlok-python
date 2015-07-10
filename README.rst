@@ -1,7 +1,8 @@
 A Python client for Sherlok
 ===========================
 
-See <http://sherlok.io/>.
+`Sherlok <http://sherlok.io/>`_ is a flexible and powerful open source, distributed, real-time text-mining engine.
+
 
 
 .. code:: python
@@ -10,6 +11,7 @@ See <http://sherlok.io/>.
 
     from sherlok import Sherlok
 
+    # returns a generator of tuples (begin, end, text, annotation_type, attributes{})
     print list(Sherlok().annotate('neuroner', 'layer 4 neuron'))
 
     [(0, 14, 'layer 4 neuron', u'Neuron', {}),
@@ -18,15 +20,15 @@ See <http://sherlok.io/>.
      (0, 7,  'layer 4', u'Layer', {u'ontologyId': u'HBP_LAYER:0000004'})]
 
 
-     # filtering and finding the text back
+    # filtering and finding the text back
     s = Sherlok()
     txt = 'parvalbumin-positive fast-spiking basket cells, somatostatin-positive regular-spiking bipolar and multipolar cells, and cholecystokinin-positive irregular-spiking bipolar and multipolar cells'
     morphology = s.select(s.annotate('neuroner', txt), u'Morphology')
-    for m in morphology:
-        print m
+    for (start, end, text, type, properties) in morphology:
+        print text, properties[u'ontologyId']
 
-    (175, 185, 'multipolar', u'Morphology', {})
-    (163, 170, 'bipolar', u'Morphology', {})
-    (98, 108, 'multipolar', u'Morphology', {})
-    (86, 93, 'bipolar', u'Morphology', {})
-    (34, 40, 'basket', u'Morphology', {})
+    basket HBP_MORPHOLOGY:0000019
+    bipolar HBP_MORPHOLOGY:0000006
+    multipolar HBP_MORPHOLOGY:0000035
+    bipolar HBP_MORPHOLOGY:0000006
+    multipolar HBP_MORPHOLOGY:0000035
