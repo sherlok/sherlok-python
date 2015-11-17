@@ -11,8 +11,10 @@ A Python client for Sherlok
 
     from sherlok import Sherlok
 
-    # returns a generator of tuples (begin, end, text, annotation_type, attributes{})
-    print list(Sherlok().annotate('neuroner', 'layer 4 neuron'))
+    s = Sherlok('neuroner')
+
+    # returns a list of tuples (begin, end, text, annotation_type, attributes{})
+    print s.annotate('layer 4 neuron')
 
     [(0, 14, 'layer 4 neuron', u'Neuron', {}),
      (8, 14, 'neuron',  u'Neuron', {}),
@@ -21,10 +23,9 @@ A Python client for Sherlok
 
 
     # filtering and finding the text back
-    s = Sherlok()
     txt = 'parvalbumin-positive fast-spiking basket cells, somatostatin-positive regular-spiking bipolar and multipolar cells, and cholecystokinin-positive irregular-spiking bipolar and multipolar cells'
-    morphology = s.select(s.annotate('neuroner', txt), u'Morphology')
-    for (start, end, text, type, properties) in morphology:
+    morphology = s.annotate(txt, u'Morphology')
+    for (start, end, text, _type, properties) in morphology:
         print text, properties[u'ontologyId']
 
     basket HBP_MORPHOLOGY:0000019
