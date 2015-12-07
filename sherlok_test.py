@@ -6,28 +6,28 @@ from sherlok import Sherlok
 class TestSherlokClient(unittest.TestCase):
 
     def test_opennlp_ners(self):
-        pipeline = 'opennlp.ners.en'
+
+        s = Sherlok('opennlp.ners.en')
         text = '''Jack Burton (born April 29, 1954 in El Paso), also known as Jake Burton, is an American snowboarder and founder of Burton Snowboards.'''
-        annotations = list(Sherlok().annotate(pipeline, text))
+        annotations = s.annotate(text).annotations
         self.assertEqual(len(annotations), 3)
         for a in annotations:
             print a
 
     def test_filter(self):
-        annotations = [
-             (29, 33, u'x0', u'Neuron', {}),
-             (0,   7, u'x1', u'Layer', {}),
-             (8,  14, u'x2', u'NeuronWithProperties', {}),
-             (19, 33, u'x3', u'NeuronWithProperties', {}),
-             (19, 28, u'x4', u'BrainRegionProp', {})]
-        selected = Sherlok().select(annotations, 'NeuronWithProperties')
-        self.assertEqual(len(selected), 2)
-        for s in selected:
-            self.assertEqual(s[3], 'NeuronWithProperties')
+        s = Sherlok('neuroner')
+
+        annotations = s.annotate('layer 2/3 nest basket cell').annotations
+        self.assertEqual(len(annotations), 8)
+
+        selected = s.annotate('layer 2/3 nest basket cell', 'Layer').annotations
+        self.assertEqual(len(selected), 1)
+
 
     # def test_keep_largest(self):
+    #     s = Sherlok('nope')
     #     annotations = [(0, 4, u'a', {}), (0, 5, u'b', {}), (0, 7, u'c', {})]
-    #     l = keep_largest(annotations)
+    #     l = s.keep_largest(annotations)
     #     self.assertEqual(len(l), 1)
     #     self.assertEqual(l[0][2], 'c')
 

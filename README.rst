@@ -3,7 +3,7 @@ A Python client for Sherlok
 
 `Sherlok <http://sherlok.io/>`_ is a flexible and powerful open source, distributed, real-time text-mining engine.
 
-
+Published as a pip package at https://pypi.python.org/pypi/sherlok/
 
 .. code:: python
 

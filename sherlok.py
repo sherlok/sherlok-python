@@ -2,9 +2,13 @@ import requests # pip install requests
 
 
 class SherlokResult(object):
-    def __init__(self, annotations, refs = {}):
+    def __init__(self, text, annotations, refs = {}):
+        self.text = text
         self.annotations = annotations
         self.refs = refs
+    def __iter__(self):
+        return self.annotations
+
 
 class Sherlok(object):
     '''
@@ -49,17 +53,19 @@ class Sherlok(object):
                             if k not in ['sofa', 'begin', 'end'] }
                         return_annots.append( (begin, end, txt, annot_type, attributes) )
 
-        return SherlokResult(return_annots, refs)
+        return SherlokResult(text, return_annots, refs)
 
-# def keep_largest(self, annotations):
-#     largests = []
-#     for a in annotations:
-#         print 'largest in obs=', a
-#         is_larger = True
-#         for i, largest in enumerate(largests):
-#             # is a larger than largest?
-#             if (a[0] >= largest[0]) and (a[1] <= largest[1]):
-#                 is_larger = False
-#         if is_larger:
-#             largests.append(a)
-#     return largest
+    # def keep_largest(self, annotations):
+
+    #     largests = []
+    #     for a in annotations:
+    #         print 'largest in obs=', a
+    #         is_larger = False
+    #         for i, largest in enumerate(largests):
+    #             # is a larger than largest?
+    #             if (a[0] >= largest[0]) and (a[1] <= largest[1]):
+    #                 del largests[i]
+    #                 is_larger = True
+    #         if is_larger:
+    #             largests.append(a)
+    #     return largests
