@@ -28,7 +28,7 @@ class Sherlok(object):
 
         resp = requests.post(
             'http://{}:{}/annotate/{}'.format(self.host, self.port, self.pipeline),
-            params={'text': text})
+            data={'text': text})
         if resp.status_code != 200:
             raise Exception('Sherlok error: {} {}'.format(resp.status_code, resp.text))
         json = resp.json()
