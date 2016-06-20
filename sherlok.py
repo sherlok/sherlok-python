@@ -1,6 +1,21 @@
 import requests # pip install requests
 
+# For Python3 compatibility
+import sys
+from six import iteritems
+if sys.version_info > (3,):
+    long = int
 
+class SherlokError(Exception):
+    def __init__(self, message, errorLog, response=None):
+
+        # Call the base class constructor with the parameters it needs
+        super(SherlokError, self).__init__(message)
+
+        self.errorLog = errorLog
+        self.response = response
+
+        
 class SherlokResult(object):
     def __init__(self, text, annotations, refs = {}):
         self.text = text
@@ -24,18 +39,51 @@ class Sherlok(object):
     @param text: the text to analyse
     @return: a generator of tuples (begin, end, text, annotation_type, attributes{})
     '''
-    def annotate(self, text, filter = False):
+    def annotate(self, text, filter = False, timeout=1.0, nbRetries=5):
 
-        resp = requests.post(
-            'http://{}:{}/annotate/{}'.format(self.host, self.port, self.pipeline),
-            data={'text': text})
+        # On occasions, the post request hangs for a long time. 
+        # From run to run, it does not seem to hang on the same publications, so 
+        # it appears to be independant of the request but more to be a bug related
+        # to communication. A default 1s timeout has been added to avoid hanging 
+        # for too long. Since this issue appears to be mainly independant of the 
+        # request, we can just catch the timeout exception and retry. We retry up
+        # to 5 times by default. 
+
+        for retry in range(nbRetries):
+            try:        
+                resp = requests.post(
+                    'http://{}:{}/annotate/{}'.format(self.host, self.port, self.pipeline),
+                     data={'text': text}, timeout=timeout)
+                break            
+            except requests.Timeout:
+                if retry == nbRetries-1:
+                    raise
+                else:
+                    continue            
+            
         if resp.status_code != 200:
-            raise Exception('Sherlok error: {} {}'.format(resp.status_code, resp.text))
+            log =   ("##################### ERROR LOG #########################\n" +
+                    str(text) + "\n" + 
+                    "##########################################################\n" + 
+                    str(resp) + "\n" + 
+                    str(type(resp)) + "\n" + 
+                    str(dir(resp)) + "\n" + 
+                    str(resp.content) + "\n" + 
+                    str(resp.headers) + "\n" + 
+                    str(resp.ok) + "\n" + 
+                    str(dir(resp.raw)) + "\n" + 
+                    str(resp.reason) + "\n" + 
+                    str(resp.request) + "\n" + 
+                    str(resp.status_code) + "\n" + 
+                    str(resp.text) + "\n" + 
+                    str(resp.url) + "\n" + 
+                    str(resp.raise_for_status) + "\n")
+            raise SherlokError('Sherlok error: {} {}'.format(resp.status_code, resp.text), log, resp)
         json = resp.json()
         refs = json['_referenced_fss']
         return_annots = []
 
-        for annot_type, annotations in json['_views'][self.view].iteritems():
+        for annot_type, annotations in iteritems(json['_views'][self.view]):
 
             # filter?
             if filter is False or annot_type == filter:
@@ -54,6 +102,7 @@ class Sherlok(object):
                         return_annots.append( (begin, end, txt, annot_type, attributes) )
 
         return SherlokResult(text, return_annots, refs)
+
 
     # def keep_largest(self, annotations):
 
